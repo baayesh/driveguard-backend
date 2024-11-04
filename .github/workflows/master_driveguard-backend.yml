@@ -25,11 +25,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
+      - name: List target directory contents
+        run: ls -la target
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.war'
+          path: target/*.war
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,3 +55,4 @@ jobs:
           slot-name: 'Production'
           package: '*.war'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9612CC86367449BF864C8E7C2E64AFDF }}
+
