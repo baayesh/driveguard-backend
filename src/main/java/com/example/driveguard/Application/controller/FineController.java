@@ -27,6 +27,7 @@ public class FineController {
         ResponseEntity<Fine> responseEntity = fineService.createFine(createFineDTO);
         if(responseEntity.getStatusCode().is2xxSuccessful()){
             Fine fine = responseEntity.getBody();
+            assert fine != null;
             fineService.increaseOffenceValue(fine.getDriverId(), fine.getFineListId());
         }
         return responseEntity;
