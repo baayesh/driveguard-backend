@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface FineRepository extends JpaRepository<Fine, Integer> {
 //    find by driverId and fineStatus
     List<Fine> findByDriverIdAndFineStatus(Integer driverId, String fineStatus);
-    Optional<Fine> getFineByFineId(Integer fine);
+    Optional<Fine> getFineByFineId(Integer fineId);
 
 }

@@ -1,5 +1,6 @@
 package com.example.driveguard.Application.controller;
 import com.example.driveguard.Application.dto.request.CreateFineDTO;
+import com.example.driveguard.Application.dto.request.OffenceLevel.FineStatusAndOffenceLevelDTO;
 import com.example.driveguard.Domain.entity.Fine;
 import com.example.driveguard.Domain.entity.FineList;
 import com.example.driveguard.Domain.service.DriverService;
@@ -52,8 +53,8 @@ public class FineController {
 
 //    change status to paid and decrease offence level
     @PostMapping("/makePayment")
-    public ResponseEntity<String> changeFineStatusToPaidAndDecreaseOffenceLevel(Integer fineId, Integer driverId, Integer fineListId){
-
+    public ResponseEntity<String> changeFineStatusToPaidAndDecreaseOffenceLevel(@RequestBody FineStatusAndOffenceLevelDTO fineStatusAndOffenceLevelDTO){
+            return fineService.changeFineStatusAndDecreaseOffenceLevel(fineStatusAndOffenceLevelDTO.getFineId(), fineStatusAndOffenceLevelDTO.getDriverId(), fineStatusAndOffenceLevelDTO.getFineListId());
     }
 
 }

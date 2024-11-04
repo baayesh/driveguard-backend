@@ -23,7 +23,7 @@ public class FineService {
     public final FineListRepository fineListRepository;
     private final DriverRepository driverRepository;
 
-    public ResponseEntity<Fine> createFine(CreateFineDTO createFineDTO){
+    public ResponseEntity<Fine> createFine(CreateFineDTO createFineDTO) {
         Fine fine = new Fine();
         fine.setDriverId(createFineDTO.getDriverId());
         fine.setFineListId(createFineDTO.getFineListId());
@@ -37,31 +37,31 @@ public class FineService {
 
     }
 
-    public ResponseEntity<FineList> getFineById(Integer fineId){
+    public ResponseEntity<FineList> getFineById(Integer fineId) {
         Optional<FineList> optionalFineList = fineListRepository.findByFineListId(fineId);
         return optionalFineList.map(fineList -> new ResponseEntity<>(fineList, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-//    list of fines
-    public List<FineList> getFineList(){
+    //    list of fines
+    public List<FineList> getFineList() {
         return fineListRepository.findAll();
     }
 
-//    Increase offence value when create fine
-    public void increaseOffenceValue(Integer driverId, Integer fineListId ){
-        if(driverId != null && fineListId != null){
+    //    Increase offence value when create fine
+    public void increaseOffenceValue(Integer driverId, Integer fineListId) {
+        if (driverId != null && fineListId != null) {
             Optional<FineList> optionalFine = fineListRepository.findByFineListId(fineListId);
-            if(optionalFine.isPresent()){
+            if (optionalFine.isPresent()) {
                 FineList fine = optionalFine.get();
                 Integer offenceChangeValue = fine.getOffenceChangeValue();
                 Optional<Driver> optionalDriver = driverRepository.findById(driverId);
-                if(optionalDriver.isPresent()){
+                if (optionalDriver.isPresent()) {
                     Driver driver = optionalDriver.get();
                     Integer currentOffenceLevel = driver.getOffenseLevel();
                     currentOffenceLevel += offenceChangeValue;
-                    if(currentOffenceLevel > 5 || currentOffenceLevel < 0 ){
-                       System.out.println("can't Increase values");
-                    }else{
+                    if (currentOffenceLevel > 5 || currentOffenceLevel < 0) {
+                        System.out.println("can't Increase values");
+                    } else {
                         driver.setOffenseLevel(currentOffenceLevel);
                         driverRepository.save(driver);
                     }
@@ -72,39 +72,61 @@ public class FineService {
         }
     }
 
-//    get fine by driverId and status
-    public ResponseEntity<List<Fine>> getAcceptedFines(Integer driverId, String fineStatus){
-        if(driverId!=null && fineStatus != null){
+    //    get fine by driverId and status
+    public ResponseEntity<List<Fine>> getAcceptedFines(Integer driverId, String fineStatus) {
+        if (driverId != null && fineStatus != null) {
             List<Fine> fines = fineRepository.findByDriverIdAndFineStatus(driverId, fineStatus);
-            if(!fines.isEmpty()){
+            if (!fines.isEmpty()) {
                 return new ResponseEntity<>(fines, HttpStatus.OK);
-            }else{
+            } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-//    change fine Status to paid
-    public ResponseEntity<String> changeFineStatus (Integer fineId){
-        if(fineId!=null){
+    //    change fine Status to paid
+    public ResponseEntity<String> changeFineStatusAndDecreaseOffenceLevel(Integer fineId, Integer driverId, Integer fineListId) {
+        if (fineId != null) {
             Optional<Fine> optionalFine = fineRepository.getFineByFineId(fineId);
-            if(optionalFine.isPresent()){
+            if (optionalFine.isPresent()) {
                 Fine fine = optionalFine.get();
-               if(fine.getFineStatus().equals("Accepted")) {
-                   fine.setFineStatus("Paid");
-                   fineRepository.save(fine);
-                   return new ResponseEntity<>("Payment Accepted", HttpStatus.OK);
-               }else{
-                   return new ResponseEntity<>("Fine Status is not equal to Accepted", HttpStatus.FORBIDDEN);
-               }
-            }else{
+                if (fine.getFineStatus().equals("Accepted")) {
+                    fine.setFineStatus("Paid");
+                    fineRepository.save(fine);
+                    Optional<FineList> optionalFineList = fineListRepository.findByFineListId(fineListId);
+                    if (optionalFineList.isPresent()) {
+                        Optional<Driver> optionalDriver = driverRepository.findDriverByDriverId(driverId);
+                        if (optionalDriver.isPresent()) {
+                          Driver driver = optionalDriver.get();
+                          FineList fineList = optionalFineList.get();
+                          Integer currentOffenceLevel = driver.getOffenseLevel();
+                          Integer offenceChangeable = fineList.getOffenceChangeValue();
+                          currentOffenceLevel -= offenceChangeable;
+                            if (currentOffenceLevel > 5 || currentOffenceLevel < 0) {
+                                System.out.println("can't decrease value");
+                            } else {
+                                driver.setOffenseLevel(currentOffenceLevel);
+                                driverRepository.save(driver);
+                            }
+
+                        } else {
+                            return new ResponseEntity<>("No Such driver", HttpStatus.NOT_FOUND);
+                        }
+                    } else {
+                        return new ResponseEntity<>("No Such fine", HttpStatus.NOT_FOUND);
+                    }
+                    return new ResponseEntity<>("Payment Accepted", HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("Fine Status is not equal to Accepted", HttpStatus.FORBIDDEN);
+                }
+            } else {
                 return new ResponseEntity<>("No such fine available", HttpStatus.NOT_FOUND);
             }
-        }else{
-            return new ResponseEntity<>("Please enter valid fineId and driverId", HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>("Please enter valid fineId", HttpStatus.BAD_REQUEST);
         }
     }
 
