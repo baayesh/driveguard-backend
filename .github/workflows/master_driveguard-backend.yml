@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy WAR app to Azure Web App - driveguard-backend
+name: Build and deploy JAR app to Azure Web App - driveguard-backend
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -23,29 +23,35 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
-
-      - name: List target directory contents
-        run: ls -la target
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/*.war
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A27633201FBE4D9AA9E7658DE6781EBD }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3E31F2AA34D34987B931FD59D2E26131 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E52E7A28E654D06B09F6A9CE5425EB2 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -53,6 +59,5 @@ jobs:
         with:
           app-name: 'driveguard-backend'
           slot-name: 'Production'
-          package: '*.war'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9612CC86367449BF864C8E7C2E64AFDF }}
-
+          package: '*.jar'
+          
