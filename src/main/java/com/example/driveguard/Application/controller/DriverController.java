@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.driveguard.Application.dto.request.login.DriverLoginDTO;
 
+import java.util.List;
+
 
 @RestController
 @AllArgsConstructor
@@ -33,6 +35,17 @@ public class DriverController {
     @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<Object> loginDriver(@RequestBody DriverLoginDTO driverLoginDTO){
         return driverService.loginDriver(driverLoginDTO);
+    }
+
+    @GetMapping("/getWitnessedOffences")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+    public ResponseEntity<List> getWitnessedOffences (@RequestParam Integer userId){
+        return driverService.witnessedOffencesList(userId);
+    }
+
+    @GetMapping("/getAcceptedOffences")
+    public ResponseEntity<List> getAcceptedOffences(@RequestParam Integer userId){
+        return driverService.driverAcceptedOffenceList(userId);
     }
 
 

@@ -36,7 +36,7 @@ public class DriverService {
             driverDataDTO.setNearestPoliceStationId(driver.getNearestPoliceStationId());
             driverDataDTO.setOffenceLevel(driver.getOffenseLevel());
             if(!fineList.isEmpty()){
-                driverDataDTO.setResponsePending(fineRepository.countByFineStatus("issued"));
+                driverDataDTO.setResponsePending(fineRepository.countByFineStatus("witnessed"));
                 driverDataDTO.setToBeSettled(fineRepository.countByFineStatus("accepted"));
             }else{
                 driverDataDTO.setResponsePending(0);
@@ -89,5 +89,27 @@ public class DriverService {
         } else {
             return new ResponseEntity<>("Driver not registered", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+//    get witnessed offences
+    public ResponseEntity<List> witnessedOffencesList(Integer userId){
+        List<Fine> fineList = fineRepository.findByDriverIdAndFineStatus(userId, "witnessed");
+        if(!fineList.isEmpty()){
+            return new ResponseEntity<List>(fineList, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+//    get driver accepted offence list
+    public ResponseEntity<List> driverAcceptedOffenceList(Integer userId){
+        List<Fine> fineList = fineRepository.findByDriverIdAndFineStatus(userId, "accepted");
+        if(!fineList.isEmpty()){
+            return new ResponseEntity<>(fineList, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 }
