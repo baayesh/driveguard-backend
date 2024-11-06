@@ -14,6 +14,5 @@ public class CreateFineDTO {
     private Date fineDate;
     private Integer officerId;
     private Integer supportingOfficerId;
-    private String fineStatus;
     private Integer remainingDaysToPay;
 }

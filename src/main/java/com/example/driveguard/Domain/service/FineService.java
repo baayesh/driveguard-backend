@@ -30,7 +30,7 @@ public class FineService {
         fine.setFineDate(createFineDTO.getFineDate());
         fine.setOfficerId(createFineDTO.getOfficerId());
         fine.setSupportingOfficerId(createFineDTO.getSupportingOfficerId());
-        fine.setFineStatus(createFineDTO.getFineStatus());
+        fine.setFineStatus("assigned");
         fine.setRemainingDaysToPay(createFineDTO.getRemainingDaysToPay());
         fineRepository.save(fine);
         return new ResponseEntity<>(fine, HttpStatus.CREATED);
@@ -93,8 +93,8 @@ public class FineService {
             Optional<Fine> optionalFine = fineRepository.getFineByFineId(fineId);
             if (optionalFine.isPresent()) {
                 Fine fine = optionalFine.get();
-                if (fine.getFineStatus().equals("Accepted")) {
-                    fine.setFineStatus("Paid");
+                if (fine.getFineStatus().equals("accepted")) {
+                    fine.setFineStatus("paid");
                     fineRepository.save(fine);
                     Optional<FineList> optionalFineList = fineListRepository.findByFineListId(fineListId);
                     if (optionalFineList.isPresent()) {

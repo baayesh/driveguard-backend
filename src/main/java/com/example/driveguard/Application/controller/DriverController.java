@@ -18,17 +18,20 @@ public class DriverController {
 
 
     @GetMapping("/getDriver")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<DriverDataDTO> getDriver(@RequestParam Integer userId) {
         return driverService.getDriver(userId);
     }
 
     @PostMapping("/register")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<Driver> registerDriver (@RequestBody DriverRegisterDTO driverRegisterDTO){
         return driverService.registerDriver(driverRegisterDTO);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginDriver(@RequestBody DriverLoginDTO driverLoginDTO){
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+    public ResponseEntity<Object> loginDriver(@RequestBody DriverLoginDTO driverLoginDTO){
         return driverService.loginDriver(driverLoginDTO);
     }
 

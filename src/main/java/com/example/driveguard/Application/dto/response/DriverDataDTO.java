@@ -12,4 +12,7 @@ public class DriverDataDTO {
     private String allowedVehicleId;
     private String nearestPoliceStationId;
     private Integer offenceLevel;
+    private Integer responsePending;
+    private Integer toBeSettled;
+
 }

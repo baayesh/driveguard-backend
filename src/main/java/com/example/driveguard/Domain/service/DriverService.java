@@ -4,24 +4,29 @@ import com.example.driveguard.Application.dto.request.DriverRegisterDTO;
 import com.example.driveguard.Application.dto.request.login.DriverLoginDTO;
 import com.example.driveguard.Application.dto.response.DriverDataDTO;
 import com.example.driveguard.Domain.entity.Driver;
+import com.example.driveguard.Domain.entity.Fine;
 import com.example.driveguard.External.DriverRepository;
+import com.example.driveguard.External.FineRepository;
 import lombok.AllArgsConstructor;
-import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class DriverService {
     private final DriverRepository driverRepository;
+    private final FineRepository fineRepository;
 //    Login
 
     public ResponseEntity<DriverDataDTO> getDriver(Integer userId) {
         DriverDataDTO driverDataDTO = new DriverDataDTO();
         Optional<Driver> optionalDriver = driverRepository.findById(userId);
+        List<Fine> fineList = fineRepository.getFineByDriverId(userId);
         if (optionalDriver.isPresent()) {
             Driver driver = optionalDriver.get();
             driverDataDTO.setFirstName(driver.getFirstName());
@@ -30,7 +35,15 @@ public class DriverService {
             driverDataDTO.setAllowedVehicleId(driver.getAllowedVehicleId());
             driverDataDTO.setNearestPoliceStationId(driver.getNearestPoliceStationId());
             driverDataDTO.setOffenceLevel(driver.getOffenseLevel());
+            if(!fineList.isEmpty()){
+                driverDataDTO.setResponsePending(fineRepository.countByFineStatus("issued"));
+                driverDataDTO.setToBeSettled(fineRepository.countByFineStatus("accepted"));
+            }else{
+                driverDataDTO.setResponsePending(0);
+                driverDataDTO.setToBeSettled(0);
+            }
             return new ResponseEntity<>(driverDataDTO, HttpStatus.OK);
+
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -59,17 +72,22 @@ public class DriverService {
     }
 
     //login
-    public ResponseEntity<String> loginDriver(DriverLoginDTO driverLoginDTO) {
+    public ResponseEntity<Object> loginDriver(DriverLoginDTO driverLoginDTO) {
         Optional<Driver> optionalDriver = driverRepository.findByUsername(driverLoginDTO.getUsername());
         if (optionalDriver.isPresent()) {
             Driver driver = optionalDriver.get();
             if (driver.getPassword().equals(driverLoginDTO.getPassword())) {
-                return new ResponseEntity<>("Login Successful", HttpStatus.OK);
+//                creating a hashmap
+                HashMap <String, Object> response = new HashMap<>();
+//                add values to created object
+                response.put("message", "login successful");
+                response.put("driverId", driver.getDriverId());
+                return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Unauthorized login", HttpStatus.UNAUTHORIZED);
             }
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Driver not registered", HttpStatus.UNAUTHORIZED);
         }
     }
 }
