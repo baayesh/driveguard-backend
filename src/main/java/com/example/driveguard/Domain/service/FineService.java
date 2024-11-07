@@ -148,4 +148,14 @@ public class FineService {
         }
     }
 
+//    get all fines by driver id
+    public ResponseEntity<List<Fine>> driverHistory (Integer driverId){
+        List<Fine> fineList = fineRepository.getFinesByDriverId(driverId);
+        if(!fineList.isEmpty()){
+            return new ResponseEntity<>(fineList, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

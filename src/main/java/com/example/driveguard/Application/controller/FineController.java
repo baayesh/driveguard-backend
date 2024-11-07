@@ -19,7 +19,6 @@ import java.util.List;
 public class FineController {
 
     private FineService fineService;
-    private DriverService driverService;
 
 //    create fine and increase offence level
     @PostMapping("/create")
@@ -40,7 +39,7 @@ public class FineController {
     public ResponseEntity<FineList> getFine (@RequestParam Integer fineId){
         return fineService.getFineById(fineId);
     }
-//    get issued fine from fines table using fine Id
+//    get issued fine from fines table using fineId
     @GetMapping("get/fine")
     public ResponseEntity<FineDataDTO> getIssuedFine (@RequestParam Integer fineId){return fineService.getFine(fineId);}
 
@@ -60,6 +59,12 @@ public class FineController {
     @PostMapping("/makePayment")
     public ResponseEntity<String> changeFineStatusToPaidAndDecreaseOffenceLevel(@RequestBody FineStatusAndOffenceLevelDTO fineStatusAndOffenceLevelDTO){
             return fineService.changeFineStatusAndDecreaseOffenceLevel(fineStatusAndOffenceLevelDTO.getFineId(), fineStatusAndOffenceLevelDTO.getDriverId(), fineStatusAndOffenceLevelDTO.getFineListId());
+    }
+
+//    get driver history
+    @GetMapping("get/driverHistory")
+    public ResponseEntity<List<Fine>> getDriverHistory (@RequestParam Integer driverId){
+        return fineService.driverHistory(driverId);
     }
 
 }
