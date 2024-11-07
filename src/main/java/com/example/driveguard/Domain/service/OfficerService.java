@@ -1,8 +1,11 @@
 package com.example.driveguard.Domain.service;
 
 import com.example.driveguard.Application.dto.request.OfficerRegisterDTO;
+import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
+import com.example.driveguard.Domain.entity.Driver;
 import com.example.driveguard.Domain.entity.TrafficOfficer;
+import com.example.driveguard.External.DriverRepository;
 import com.example.driveguard.External.OfficerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class OfficerService {
     public final OfficerRepository officerRepository;
+    public final DriverRepository driverRepository;
 
     public ResponseEntity<TrafficOfficer> registerOfficer (OfficerRegisterDTO officerRegisterDTO){
         TrafficOfficer trafficOfficer = new TrafficOfficer();
@@ -40,6 +44,27 @@ public class OfficerService {
             officerDataDTO.setPoliceStationId(trafficOfficer.getPoliceStationId());
             officerDataDTO.setPost(trafficOfficer.getPost());
             return new ResponseEntity<>(officerDataDTO, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+//    get driver data using Licence number
+    public ResponseEntity<DriverDataOfficerRequestDTO> getDriver(String licenceNumber){
+        DriverDataOfficerRequestDTO driverDataOfficerRequestDTO = new DriverDataOfficerRequestDTO();
+        Optional<Driver> optionalDriver = driverRepository.findDriverByLicenceNumber(licenceNumber);
+        if(optionalDriver.isPresent()){
+            Driver driver = optionalDriver.get();
+            driverDataOfficerRequestDTO.setFirstName(driver.getFirstName());
+            driverDataOfficerRequestDTO.setLastName(driver.getLastName());
+            driverDataOfficerRequestDTO.setAge(driver.getAge());
+            driverDataOfficerRequestDTO.setHouseNumber(driver.getHouseNumber());
+            driverDataOfficerRequestDTO.setStreetName(driver.getStreetName());
+            driverDataOfficerRequestDTO.setCity(driver.getCity());
+            driverDataOfficerRequestDTO.setNic(driver.getNic());
+            return new ResponseEntity<>(driverDataOfficerRequestDTO, HttpStatus.OK);
+
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

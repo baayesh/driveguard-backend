@@ -1,5 +1,6 @@
 package com.example.driveguard.Application.controller;
 
+import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
 import com.example.driveguard.Domain.entity.TrafficOfficer;
 import lombok.AllArgsConstructor;
@@ -23,5 +24,10 @@ public class OfficerController {
     @GetMapping("/get")
     public ResponseEntity<OfficerDataDTO> getOfficer(@RequestParam Integer policeIdNumber ){
         return officerService.getOfficer(policeIdNumber);
+    }
+
+    @GetMapping("/get/driver")
+    public ResponseEntity<DriverDataOfficerRequestDTO> getDriver(@RequestParam String licenceNumber){
+        return officerService.getDriver(licenceNumber);
     }
 }
