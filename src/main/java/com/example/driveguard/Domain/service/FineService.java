@@ -37,7 +37,7 @@ public class FineService {
 
     }
 
-    public ResponseEntity<FineList> getFineById(Integer fineId) {
+    public ResponseEntity<FineList>  getFineById(Integer fineId) {
         Optional<FineList> optionalFineList = fineListRepository.findByFineListId(fineId);
         return optionalFineList.map(fineList -> new ResponseEntity<>(fineList, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -127,6 +127,24 @@ public class FineService {
             }
         } else {
             return new ResponseEntity<>("Please enter valid fineId", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+//    get fine from fines table. Issued fine will return according to fine id
+    public ResponseEntity<FineDataDTO> getFine (Integer fineId){
+        Optional<Fine> optionalFine = fineRepository.getFineByFineId(fineId);
+        if(optionalFine.isPresent()){
+           FineDataDTO fineDataDTO = new FineDataDTO();
+           Fine fine = optionalFine.get();
+           fineDataDTO.setFineId(fine.getFineId());
+           fineDataDTO.setOfficerId(fine.getOfficerId());
+           fineDataDTO.setSupportingOfficerId(fine.getSupportingOfficerId());
+           fineDataDTO.setFineDate(fine.getFineDate());
+           fineDataDTO.setRemainingDaysToPay(fine.getRemainingDaysToPay());
+           fineDataDTO.setFineStatus(fine.getFineStatus());
+           return new ResponseEntity<>(fineDataDTO, HttpStatus.OK );
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

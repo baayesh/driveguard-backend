@@ -11,7 +11,7 @@ public class FineDataDTO {
     private Integer fineId;
     private Integer officerId;
     private Integer supportingOfficerId;
-    private Integer fineListId;
     private Date fineDate;
     private Integer remainingDaysToPay;
+    private String fineStatus;
 }

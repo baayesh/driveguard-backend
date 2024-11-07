@@ -1,6 +1,7 @@
 package com.example.driveguard.Application.controller;
 import com.example.driveguard.Application.dto.request.CreateFineDTO;
 import com.example.driveguard.Application.dto.request.OffenceLevel.FineStatusAndOffenceLevelDTO;
+import com.example.driveguard.Application.dto.response.FineDataDTO;
 import com.example.driveguard.Domain.entity.Fine;
 import com.example.driveguard.Domain.entity.FineList;
 import com.example.driveguard.Domain.service.DriverService;
@@ -39,6 +40,9 @@ public class FineController {
     public ResponseEntity<FineList> getFine (@RequestParam Integer fineId){
         return fineService.getFineById(fineId);
     }
+//    get issued fine from fines table using fine Id
+    @GetMapping("get/fine")
+    public ResponseEntity<FineDataDTO> getIssuedFine (@RequestParam Integer fineId){return fineService.getFine(fineId);}
 
 //    get all fines
     @GetMapping("/get/list")
