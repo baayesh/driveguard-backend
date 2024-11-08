@@ -1,5 +1,6 @@
 package com.example.driveguard.Application.controller;
 
+import com.example.driveguard.Application.dto.request.login.OfficerLoginDTO;
 import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
 import com.example.driveguard.Application.dto.response.WitnessedFineListDTO;
@@ -37,5 +38,11 @@ public class OfficerController {
     @GetMapping("get/witnessingOffencesList")
     public ResponseEntity<List<WitnessedFineListDTO>> getWitnessedOfficerList (@RequestParam Integer witnessedOfficerId){
         return officerService.getFinesToWitness(witnessedOfficerId);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TrafficOfficer> officerLogin(@RequestBody OfficerLoginDTO officerLoginDTO){
+        System.out.println("called to function");
+        return officerService.officerLogin(officerLoginDTO);
     }
 }

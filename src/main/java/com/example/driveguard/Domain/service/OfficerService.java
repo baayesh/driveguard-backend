@@ -1,6 +1,7 @@
 package com.example.driveguard.Domain.service;
 
 import com.example.driveguard.Application.dto.request.OfficerRegisterDTO;
+import com.example.driveguard.Application.dto.request.login.OfficerLoginDTO;
 import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
 import com.example.driveguard.Application.dto.response.WitnessedFineListDTO;
@@ -27,6 +28,21 @@ public class OfficerService {
     public final DriverRepository driverRepository;
     public final FineRepository fineRepository;
     public final FineListRepository fineListRepository;
+
+//    officer login
+    public ResponseEntity<TrafficOfficer> officerLogin(OfficerLoginDTO officerLoginDTO) {
+        Optional<TrafficOfficer> optionalTrafficOfficer = officerRepository.findByPoliceIdNumber(officerLoginDTO.getPoliceIdNumber());
+        if (optionalTrafficOfficer.isPresent()) {
+            TrafficOfficer trafficOfficer = optionalTrafficOfficer.get();
+            if (trafficOfficer.getPassword().equals(officerLoginDTO.getPassword())) {
+                return new ResponseEntity<>( HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        }
+    }
 
     public ResponseEntity<TrafficOfficer> registerOfficer(OfficerRegisterDTO officerRegisterDTO) {
         TrafficOfficer trafficOfficer = new TrafficOfficer();
