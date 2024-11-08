@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -21,7 +22,7 @@ public class Fine {
     private Integer fineId;
     private Integer driverId;
     private Integer fineListId;
-    private Date fineDate;
+    private LocalDate fineDate;
     private String fineStatus;
     private Integer officerId;
     private Integer supportingOfficerId;

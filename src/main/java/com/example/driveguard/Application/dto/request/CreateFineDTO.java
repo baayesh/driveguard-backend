@@ -8,11 +8,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class CreateFineDTO {
-    private Integer driverId;
-    private String fineName;
-    private Integer fineListId;
-    private Date fineDate;
-    private Integer officerId;
-    private Integer supportingOfficerId;
-    private Integer remainingDaysToPay;
+   private Integer officerId;
+   private String licenceNumber;
+   private Integer fineListId;
+   private Integer witnessOfficerId;
 }
