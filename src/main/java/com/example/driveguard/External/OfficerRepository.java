@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface OfficerRepository extends JpaRepository<TrafficOfficer, Integer> {
     Optional<TrafficOfficer> findByPoliceIdNumber(Integer policeIdNumber);
+    Optional<TrafficOfficer> findByOfficerId(Integer officerId);
 }

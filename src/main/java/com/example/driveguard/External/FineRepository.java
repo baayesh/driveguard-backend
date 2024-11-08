@@ -14,5 +14,7 @@ public interface FineRepository extends JpaRepository<Fine, Integer> {
     Integer countByFineStatus(String status);
 //    get all fines by driver id
     List<Fine> getFinesByDriverId(Integer driverId);
+//    get all fines by supporting officer id
+    List<Fine> getFinesBySupportingOfficerIdAndFineStatus(Integer supportingOfficerId, String fineStatus);
 
 }

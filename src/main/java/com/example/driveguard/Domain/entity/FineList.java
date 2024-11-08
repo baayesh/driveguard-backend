@@ -20,6 +20,6 @@ public class FineList {
     private Integer fineListId;
     private String fineName;
     private String fineDescription;
-    private String fineAmount;
+    private Float fineAmount;
     private Integer OffenceChangeValue;
 }

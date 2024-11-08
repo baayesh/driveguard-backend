@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface FineListRepository extends JpaRepository<FineList, Integer> {
     Optional<FineList> findByFineListId(Integer fineListId);
+
 }

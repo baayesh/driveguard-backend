@@ -59,21 +59,20 @@ public class FineService {
 //                save and send response
                     fineRepository.save(fine);
                     return new ResponseEntity<>(fine, HttpStatus.CREATED);
-                }
-                else{
-                    String message ="no officer found";
+                } else {
+                    String message = "no officer found";
                     return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
                 }
 
 
             } else {
-                String message ="no fine found";
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                String message = "no fine found";
+                return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
 
             }
         } else {
-            String message ="no driver found";
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            String message = "no driver found";
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
 
 
@@ -108,11 +107,51 @@ public class FineService {
                         driverRepository.save(driver);
                     }
 
+
                 }
 
             }
         }
     }
+
+    //    witness for fine
+    public ResponseEntity<String> makeWitnessed(Integer fineId) {
+        if (fineId != null) {
+            Optional<Fine> optionalFine = fineRepository.findById(fineId);
+
+            if (optionalFine.isPresent()) {
+                Fine fine = optionalFine.get();
+                fine.setFineStatus("witnessed");
+                fineRepository.save(fine);
+                return new ResponseEntity<>("Witnessed", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //    Accept Fine
+    public ResponseEntity<String> acceptFine(Integer fineId) {
+        if (fineId != null) {
+            Optional<Fine> optionalFine = fineRepository.getFineByFineId(fineId);
+            if (optionalFine.isPresent()) {
+                Fine fine = optionalFine.get();
+                fine.setFineStatus("accepted");
+                fineRepository.save(fine);
+                Integer driverId = fine.getDriverId();
+                Integer fineListId = fine.getFineListId();
+                increaseOffenceValue(driverId, fineListId);
+                return new ResponseEntity<>("Fine Accepted", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     //    get fine by driverId and status
     public ResponseEntity<List<Fine>> getAcceptedFines(Integer driverId, String fineStatus) {

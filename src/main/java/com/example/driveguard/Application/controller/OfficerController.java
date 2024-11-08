@@ -2,12 +2,15 @@ package com.example.driveguard.Application.controller;
 
 import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
+import com.example.driveguard.Application.dto.response.WitnessedFineListDTO;
 import com.example.driveguard.Domain.entity.TrafficOfficer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.driveguard.Application.dto.request.OfficerRegisterDTO;
 import com.example.driveguard.Domain.service.OfficerService;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -29,5 +32,10 @@ public class OfficerController {
     @GetMapping("/get/driver")
     public ResponseEntity<DriverDataOfficerRequestDTO> getDriver(@RequestParam String licenceNumber){
         return officerService.getDriver(licenceNumber);
+    }
+
+    @GetMapping("get/witnessingOffencesList")
+    public ResponseEntity<List<WitnessedFineListDTO>> getWitnessedOfficerList (@RequestParam Integer witnessedOfficerId){
+        return officerService.getFinesToWitness(witnessedOfficerId);
     }
 }
