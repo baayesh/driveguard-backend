@@ -4,10 +4,7 @@ import com.example.driveguard.Domain.entity.Administrator;
 import com.example.driveguard.Domain.service.AdministratorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -17,6 +14,7 @@ public class AdministratorController {
     private AdministratorService administratorService;
 
     @PostMapping("/register")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<Administrator> registerAdministrator(@RequestBody AdministratorRegisterDTO administratorRegisterDTO){
         return administratorService.registerAdministrator(administratorRegisterDTO);
     }

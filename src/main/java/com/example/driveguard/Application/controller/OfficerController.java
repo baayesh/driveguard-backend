@@ -21,26 +21,31 @@ public class OfficerController {
     private OfficerService officerService;
 
     @PostMapping("/register")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<TrafficOfficer> registerTrafficOfficer (@RequestBody OfficerRegisterDTO officerRegisterDTO){
         return officerService.registerOfficer(officerRegisterDTO);
     }
 
     @GetMapping("/get")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<OfficerDataDTO> getOfficer(@RequestParam Integer policeIdNumber ){
         return officerService.getOfficer(policeIdNumber);
     }
 
     @GetMapping("/get/driver")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<DriverDataOfficerRequestDTO> getDriver(@RequestParam String licenceNumber){
         return officerService.getDriver(licenceNumber);
     }
 
     @GetMapping("get/witnessingOffencesList")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<List<WitnessedFineListDTO>> getWitnessedOfficerList (@RequestParam Integer witnessedOfficerId){
         return officerService.getFinesToWitness(witnessedOfficerId);
     }
 
     @PostMapping("/login")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<TrafficOfficer> officerLogin(@RequestBody OfficerLoginDTO officerLoginDTO){
         System.out.println("called to function");
         return officerService.officerLogin(officerLoginDTO);

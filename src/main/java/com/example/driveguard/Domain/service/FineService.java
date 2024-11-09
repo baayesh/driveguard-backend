@@ -2,6 +2,7 @@ package com.example.driveguard.Domain.service;
 
 import com.example.driveguard.Application.dto.request.CreateFineDTO;
 import com.example.driveguard.Application.dto.response.FineDataDTO;
+import com.example.driveguard.Application.dto.response.WitnessedFineListDTO;
 import com.example.driveguard.Domain.entity.Driver;
 import com.example.driveguard.Domain.entity.Fine;
 import com.example.driveguard.Domain.entity.FineList;
@@ -14,10 +15,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -154,19 +155,44 @@ public class FineService {
 
 
     //    get fine by driverId and status
-    public ResponseEntity<List<Fine>> getAcceptedFines(Integer driverId, String fineStatus) {
+    public ResponseEntity<List<WitnessedFineListDTO>> getFines(Integer driverId, String fineStatus) {
         if (driverId != null && fineStatus != null) {
             List<Fine> fines = fineRepository.findByDriverIdAndFineStatus(driverId, fineStatus);
+
             if (!fines.isEmpty()) {
-                return new ResponseEntity<>(fines, HttpStatus.OK);
+                System.out.println("There are fines");
+
+                List<WitnessedFineListDTO> witnessedFineListDTOS = fines.stream().map(fine -> {
+                    WitnessedFineListDTO witnessedFineListDTO = new WitnessedFineListDTO();
+                    witnessedFineListDTO.setFineId(fine.getFineId());
+                    witnessedFineListDTO.setFineDate(fine.getFineDate());
+                    witnessedFineListDTO.setRemainingDaysToPay(fine.getRemainingDaysToPay());
+
+                    // Retrieve and set fineList details
+                    fineListRepository.findByFineListId(fine.getFineListId()).ifPresent(fineDetails -> {
+                        witnessedFineListDTO.setFineName(fineDetails.getFineName());
+                        witnessedFineListDTO.setFineDescription(fineDetails.getFineDescription());
+                        witnessedFineListDTO.setFineAmount(fineDetails.getFineAmount());
+                    });
+
+                    // Retrieve and set values for officer details
+                    officerRepository.findByOfficerId(fine.getOfficerId()).ifPresent(officer -> {
+                        witnessedFineListDTO.setOfficerFirstName(officer.getFirstName());
+                        witnessedFineListDTO.setOfficerLastName(officer.getLastName());
+                    });
+
+                    return witnessedFineListDTO;
+                }).collect(Collectors.toList());
+
+                return new ResponseEntity<>(witnessedFineListDTOS, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
 
     //    change fine Status to paid
     public ResponseEntity<String> changeFineStatusAndDecreaseOffenceLevel(Integer fineId, Integer driverId, Integer fineListId) {
