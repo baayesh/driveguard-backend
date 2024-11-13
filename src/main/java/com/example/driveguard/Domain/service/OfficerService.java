@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,17 +31,23 @@ public class OfficerService {
     public final FineListRepository fineListRepository;
 
 //    officer login
-    public ResponseEntity<TrafficOfficer> officerLogin(OfficerLoginDTO officerLoginDTO) {
+    public ResponseEntity<Object> officerLogin(OfficerLoginDTO officerLoginDTO) {
         Optional<TrafficOfficer> optionalTrafficOfficer = officerRepository.findByPoliceIdNumber(officerLoginDTO.getPoliceIdNumber());
         if (optionalTrafficOfficer.isPresent()) {
             TrafficOfficer trafficOfficer = optionalTrafficOfficer.get();
             if (trafficOfficer.getPassword().equals(officerLoginDTO.getPassword())) {
-                return new ResponseEntity<>( HttpStatus.OK);
+
+//          create hashmap to send data
+                HashMap<String, Object> response = new HashMap<>();
+                response.put("Message", "login Successful");
+                response.put("OfficerId", trafficOfficer.getOfficerId());
+
+                return new ResponseEntity<>( response, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Unauthorized login", HttpStatus.NOT_FOUND);
             }
         } else {
-            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Bad request",  HttpStatus.NOT_FOUND);
         }
     }
 
@@ -136,5 +143,6 @@ public class OfficerService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-}
+
+ }
 

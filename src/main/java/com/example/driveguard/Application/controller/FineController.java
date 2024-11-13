@@ -83,6 +83,14 @@ public class FineController {
         return fineService.acceptFine(fineId);
     }
 
+//    reject Fine
+@GetMapping("/rejectFine")
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+public ResponseEntity<String> rejectingFine(@RequestParam Integer fineId){
+    return fineService.rejectFine(fineId);
+}
+
+
     //        make officer witnessed
     @GetMapping("/witnessed")
     @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)

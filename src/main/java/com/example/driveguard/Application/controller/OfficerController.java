@@ -46,8 +46,10 @@ public class OfficerController {
 
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-    public ResponseEntity<TrafficOfficer> officerLogin(@RequestBody OfficerLoginDTO officerLoginDTO){
+    public ResponseEntity<Object> officerLogin(@RequestBody OfficerLoginDTO officerLoginDTO){
         System.out.println("called to function");
         return officerService.officerLogin(officerLoginDTO);
     }
+
+
 }

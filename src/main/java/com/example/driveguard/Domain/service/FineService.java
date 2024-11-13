@@ -153,6 +153,22 @@ public class FineService {
         }
     }
 
+    public ResponseEntity<String> rejectFine(Integer fineId) {
+        if (fineId != null) {
+            Optional<Fine> optionalFine = fineRepository.getFineByFineId(fineId);
+            if (optionalFine.isPresent()) {
+                Fine fine = optionalFine.get();
+                fine.setFineStatus("rejected");
+                fineRepository.save(fine);
+                return new ResponseEntity<>("Fine Rejected", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     //    get fine by driverId and status
     public ResponseEntity<List<WitnessedFineListDTO>> getFines(Integer driverId, String fineStatus) {
@@ -167,6 +183,7 @@ public class FineService {
                     witnessedFineListDTO.setFineId(fine.getFineId());
                     witnessedFineListDTO.setFineDate(fine.getFineDate());
                     witnessedFineListDTO.setRemainingDaysToPay(fine.getRemainingDaysToPay());
+                    witnessedFineListDTO.setFineListId(fine.getFineListId());
 
                     // Retrieve and set fineList details
                     fineListRepository.findByFineListId(fine.getFineListId()).ifPresent(fineDetails -> {

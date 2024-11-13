@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 public class WitnessedFineListDTO {
     private Integer fineId;
+    private Integer fineListId;
     private LocalDate fineDate;
     private String fineName;
     private String fineDescription;
