@@ -36,8 +36,8 @@ public class DriverService {
             driverDataDTO.setNearestPoliceStationId(driver.getNearestPoliceStationId());
             driverDataDTO.setOffenceLevel(driver.getOffenseLevel());
             if(!fineList.isEmpty()){
-                driverDataDTO.setResponsePending(fineRepository.countByFineStatus("witnessed"));
-                driverDataDTO.setToBeSettled(fineRepository.countByFineStatus("accepted"));
+                driverDataDTO.setResponsePending(fineRepository.countByFineStatusAndDriverId("witnessed", userId));
+                driverDataDTO.setToBeSettled(fineRepository.countByFineStatusAndDriverId("accepted",userId));
             }else{
                 driverDataDTO.setResponsePending(0);
                 driverDataDTO.setToBeSettled(0);
