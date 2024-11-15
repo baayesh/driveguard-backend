@@ -3,6 +3,7 @@ package com.example.driveguard.Domain.service;
 import com.example.driveguard.Application.dto.request.OfficerRegisterDTO;
 import com.example.driveguard.Application.dto.request.login.OfficerLoginDTO;
 import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
+import com.example.driveguard.Application.dto.response.IssuedFineListDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
 import com.example.driveguard.Application.dto.response.WitnessedFineListDTO;
 import com.example.driveguard.Domain.entity.Driver;
@@ -102,40 +103,43 @@ public class OfficerService {
     }
 
     //    get issued offences to make them witnessed
-    public ResponseEntity<List<WitnessedFineListDTO>> getFinesToWitness(Integer witnessedOfficerId) {
+    public ResponseEntity<List<IssuedFineListDTO>> getFinesToWitness(Integer witnessedOfficerId) {
         if (witnessedOfficerId != null) {
             List<Fine> fineList = fineRepository.getFinesBySupportingOfficerIdAndFineStatus(witnessedOfficerId, "issued");
 
             if (!fineList.isEmpty()) {
-                List<WitnessedFineListDTO> witnessedFineListDTOS = fineList.stream().map(fine -> {
-                    WitnessedFineListDTO witnessedFineListDTO = new WitnessedFineListDTO();
+                List<IssuedFineListDTO> issuedFineListDTOS = fineList.stream().map(fine -> {
+                    IssuedFineListDTO issuedFineListDTO = new IssuedFineListDTO();
 
-                    // Set values
-                    witnessedFineListDTO.setFineId(fine.getFineId());
-                    witnessedFineListDTO.setFineDate(fine.getFineDate());
-                    witnessedFineListDTO.setRemainingDaysToPay(fine.getRemainingDaysToPay());
+                    // Set direct values
+                    issuedFineListDTO.setOffenseId(fine.getFineId());
+                    issuedFineListDTO.setOffenceDate(fine.getFineDate());
 
-                    // Retrieve and set FineList details
-                    fineListRepository.findByFineListId(fine.getFineListId()).ifPresent(fineDetails -> {
-                        witnessedFineListDTO.setFineName(fineDetails.getFineName());
-                        witnessedFineListDTO.setFineDescription(fineDetails.getFineDescription());
-                        witnessedFineListDTO.setFineAmount(fineDetails.getFineAmount());
+                    // Retrieve and set fine list data
+                    fineListRepository.findByFineListId(fine.getFineListId()).ifPresent(fineDetail -> {
+                        issuedFineListDTO.setOffenseName(fineDetail.getFineName());
+                        issuedFineListDTO.setOffenseDescription(fineDetail.getFineDescription());
+                        issuedFineListDTO.setOffenseAmount(fineDetail.getFineAmount());
                     });
 
-                    // Retrieve and set TrafficOfficer details
-                    officerRepository.findByOfficerId(fine.getOfficerId()).ifPresent(trafficOfficer -> {
-                        witnessedFineListDTO.setOfficerFirstName(trafficOfficer.getFirstName());
-                        witnessedFineListDTO.setOfficerLastName(trafficOfficer.getLastName());
+//                    set driver data
+                    driverRepository.findDriverByDriverId(fine.getDriverId()).ifPresent(driver -> {
+                        issuedFineListDTO.setDriverFirstName(driver.getFirstName());
+                        issuedFineListDTO.setDriverLastName(driver.getLastName());
+                        issuedFineListDTO.setDrivingLicenseNumber(driver.getLicenceNumber());
                     });
 
-                    return witnessedFineListDTO;
+                    // Retrieve and set officer details
+                    officerRepository.findById(fine.getOfficerId()).ifPresent(issuedOfficer -> {
+                        issuedFineListDTO.setIssuedOfficerFirstName(issuedOfficer.getFirstName());
+                        issuedFineListDTO.setIssuedOfficerLastName(issuedOfficer.getLastName());
+                        issuedFineListDTO.setIssuedOfficerPoliceId(issuedOfficer.getPoliceIdNumber());
+                    });
+
+                    return issuedFineListDTO;
                 }).collect(Collectors.toList());
 
-                if (witnessedFineListDTOS.isEmpty()) {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-
-                return new ResponseEntity<>(witnessedFineListDTOS, HttpStatus.OK);
+                return new ResponseEntity<>(issuedFineListDTOS, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -144,5 +148,6 @@ public class OfficerService {
         }
     }
 
- }
+
+}
 

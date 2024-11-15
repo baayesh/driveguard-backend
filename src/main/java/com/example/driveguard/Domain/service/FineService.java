@@ -194,9 +194,22 @@ public class FineService {
 
                     // Retrieve and set values for officer details
                     officerRepository.findByOfficerId(fine.getOfficerId()).ifPresent(officer -> {
+                        witnessedFineListDTO.setOfficerId(officer.getPoliceIdNumber());
                         witnessedFineListDTO.setOfficerFirstName(officer.getFirstName());
                         witnessedFineListDTO.setOfficerLastName(officer.getLastName());
+
+
                     });
+
+                    officerRepository.findById(fine.getSupportingOfficerId()).ifPresent(officer ->{
+                        witnessedFineListDTO.setWitnessedOfficerId(officer.getPoliceIdNumber());
+                        witnessedFineListDTO.setWitnessedOfficerFirstName(officer.getFirstName());
+                        witnessedFineListDTO.setWitnessedOfficerLastName(officer.getLastName());
+                    });
+
+
+
+
 
                     return witnessedFineListDTO;
                 }).collect(Collectors.toList());

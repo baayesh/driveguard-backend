@@ -16,6 +16,10 @@ public class WitnessedFineListDTO {
     private Float fineAmount;
     private String officerFirstName;
     private String officerLastName;
+    private Integer OfficerId;
+    private String witnessedOfficerFirstName;
+    private String witnessedOfficerLastName;
+    private Integer witnessedOfficerId;
     private Integer remainingDaysToPay;
 
 }

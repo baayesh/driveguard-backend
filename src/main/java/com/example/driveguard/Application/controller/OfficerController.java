@@ -2,6 +2,7 @@ package com.example.driveguard.Application.controller;
 
 import com.example.driveguard.Application.dto.request.login.OfficerLoginDTO;
 import com.example.driveguard.Application.dto.response.DriverDataOfficerRequestDTO;
+import com.example.driveguard.Application.dto.response.IssuedFineListDTO;
 import com.example.driveguard.Application.dto.response.OfficerDataDTO;
 import com.example.driveguard.Application.dto.response.WitnessedFineListDTO;
 import com.example.driveguard.Domain.entity.TrafficOfficer;
@@ -40,14 +41,13 @@ public class OfficerController {
 
     @GetMapping("get/witnessingOffencesList")
     @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-    public ResponseEntity<List<WitnessedFineListDTO>> getWitnessedOfficerList (@RequestParam Integer witnessedOfficerId){
+    public ResponseEntity<List<IssuedFineListDTO>> getWitnessedOfficerList (@RequestParam Integer witnessedOfficerId){
         return officerService.getFinesToWitness(witnessedOfficerId);
     }
 
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
     public ResponseEntity<Object> officerLogin(@RequestBody OfficerLoginDTO officerLoginDTO){
-        System.out.println("called to function");
         return officerService.officerLogin(officerLoginDTO);
     }
 
