@@ -95,6 +95,7 @@ public class OfficerService {
             driverDataOfficerRequestDTO.setStreetName(driver.getStreetName());
             driverDataOfficerRequestDTO.setCity(driver.getCity());
             driverDataOfficerRequestDTO.setNic(driver.getNic());
+            driverDataOfficerRequestDTO.setOffenseLevel(driver.getOffenseLevel());
             return new ResponseEntity<>(driverDataOfficerRequestDTO, HttpStatus.OK);
 
         } else {

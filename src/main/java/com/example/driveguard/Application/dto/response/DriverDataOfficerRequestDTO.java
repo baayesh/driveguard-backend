@@ -13,5 +13,6 @@ public class DriverDataOfficerRequestDTO {
     private String streetName;
     private String city;
     private String nic;
+    private Integer offenseLevel;
 
 }
